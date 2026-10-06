@@ -1,0 +1,126 @@
+{
+  "skill_name": "3d-model-download",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Tải model này về cho tôi: https://poly.pizza/m/nIItLV9nxS",
+      "expected_output": "Chạy script router với link poly.pizza, in JSON ok:true provider 'poly-pizza', file model.glb tồn tại thật trong <output>/poly-pizza/nIItLV9nxS/ kèm metadata.json có creator/license/likes; báo user tên model + tác giả + license.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Tải mẫu Meshy này giúp tôi: https://www.meshy.ai/3d-models/Stag-v2-019ca926-5c23-7ebd-840b-3849dab0dcbb",
+      "expected_output": "Router nhận diện host meshy → delegate skill meshy-rodin-download qua uv run; stdout có JSON ok:true với file model.glb thật trong <output>/meshy/<task-uuid>/; không cần gói Pro; báo cáo bytes + sha256.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Tải 2 cái này: https://poly.pizza/m/qJ2gsTUBHL và https://www.meshy.ai/3d-models/Trump-T-Pose-v2-0193aec6-1611-7e7b-9cbf-138acbde73fd",
+      "expected_output": "Hai dòng JSON độc lập (mỗi link 1 dòng), cả hai ok:true, file thật ở 2 thư mục provider khác nhau; không dừng giữa chừng khi 1 link lỗi.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Tải model từ link này: https://sketchfab.com/3d-models/some-cool-model-abc123",
+      "expected_output": "Trả JSON ok:false error bắt đầu SKETCHFAB_UID_REQUIRED; không bịa file, không yêu cầu đăng nhập vì nguyên nhân là thiếu UID hợp lệ.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Tải Blu từ https://sketchfab.com/3d-models/blu-anime-girl-character-c75ab6b43e1e49da952361ee6b36f0a4 và cho biết file ở đâu.",
+      "expected_output": "Dùng router; một JSON, file_path/output_dir/metadata_path tuyệt đối, GLB hợp lệ có texture/rig/animation, SHA khớp file; báo warnings nếu partial. Không đụng phiên Chrome cá nhân.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Tải Blu https://sketchfab.com/3d-models/blu-anime-girl-character-c75ab6b43e1e49da952361ee6b36f0a4 nhưng bỏ animation, vẫn giữ rig và texture.",
+      "expected_output": "Dùng --no-animations; GLB giữ skins/images, animations bằng 0; không hứa đây là Static Pose của viewer, không zero bones.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Tải URL HTTPS trực tiếp tới model.glb có query ký số; kiểm tra metadata và đường dẫn trả về.",
+      "expected_output": "Một JSON ok:true, file thật, SHA/bytes đúng, metadata atomic và đường dẫn tuyệt đối; query/credential/fragment không xuất hiện trong log hay metadata. GLB hỏng phải ok:false.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "Tải model.gltf có model.bin và texture.png nằm ngoài, hoặc OBJ có mtllib.",
+      "expected_output": "Báo status partial và external_dependencies; không nói đã tải trọn asset khi mới tải file chính.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "Thử extractor deadline ngắn và hai lượt tải song song để kiểm tra timeout, cleanup và port.",
+      "expected_output": "Timeout trả JSON lỗi có cấu trúc; Chrome/profile do run tạo được dọn, không ảnh hưởng Chrome user. Hai run được cấp port riêng và output riêng.",
+      "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "Tải Allom https://sketchfab.com/3d-models/allom-game-character-7dd62bde838845e89f15741e79f88e9a và báo license.",
+      "expected_output": "Giữ attribution; nếu metadata không cung cấp license thì báo unknown, không tự ghi CC. Import GLB vào Blender bằng import_scene.gltf nếu được yêu cầu mở.",
+      "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "Tải Spartan https://sketchfab.com/3d-models/spartan-armour-mkv-halo-reach-57070b2fd9ff472c8988e76d8c5cbe66 và mở Blender để xem. Viewer trong tình huống kiểm thử chỉ liệt kê Static Pose và Take001.",
+      "expected_output": "Đọc và xác nhận danh sách/pose trên viewer; không gọi Take001 là Idle. Ưu tiên --no-animations để tải bản tĩnh ứng viên, giữ rig/texture; import riêng và đối chiếu ảnh trước khi kết luận Static Pose khớp.",
+      "assertions": [
+        "Không khẳng định có clip Idle khi danh sách chỉ có Static Pose và Take001.",
+        "Chọn bản tĩnh cho mục tiêu mở xem và phân biệt bỏ animation với xác minh pose.",
+        "Không báo khớp viewer nếu chưa có ảnh đối chiếu đọc được."
+      ],
+      "files": []
+    },
+    {
+      "id": 12,
+      "prompt": "Đã tải nhân vật với --no-animations, GLB có 0 animation và vẫn có rig nhưng tư thế tay trong Blender khác Static Pose trên viewer. Kiểm tra giúp tôi.",
+      "expected_output": "Báo default pose chưa khớp viewer; giữ file gốc, kiểm tra reference và transform/bind/pose trên bản sao. Không zero bones, không dùng 0 animation hoặc import thành công làm bằng chứng pose đúng.",
+      "assertions": [
+        "Kết luận còn lệch hoặc chưa xác minh, không kết luận Static Pose đúng từ animations=0.",
+        "Giữ rig và bản gốc; không reset toàn bộ pose bones để giả lập Static Pose."
+      ],
+      "files": []
+    },
+    {
+      "id": 13,
+      "prompt": "Tải Spartan https://sketchfab.com/3d-models/spartan-armour-mkv-halo-reach-57070b2fd9ff472c8988e76d8c5cbe66, giữ animation Take001 và mở kiểm tra chuyển động trong Blender.",
+      "expected_output": "Không dùng --no-animations; tải clip nguồn rồi chọn Take001 trong Blender. So với viewer ở đầu/giữa/cuối clip, ghi thời điểm và FPS/frame tương ứng. Không thay yêu cầu bằng bản tĩnh nếu animation lỗi.",
+      "assertions": [
+        "Lệnh tải giữ animation và không bịa tùy chọn CLI chọn clip theo tên.",
+        "Báo bằng chứng các mốc chuyển động đã kiểm hoặc rõ phần chưa kiểm.",
+        "Không coi bản tĩnh đúng là bằng chứng Take001 đã được sửa."
+      ],
+      "files": []
+    },
+    {
+      "id": 14,
+      "prompt": "Tải nhân vật Sketchfab để xem Static Pose trong Blender. Trang viewer không tải được menu animation hoặc ảnh reference, nhưng extractor vẫn tải được model công khai.",
+      "expected_output": "Tiếp tục tải nếu tài nguyên truy cập được; ghi chưa biết danh sách clip/chưa xác minh pose. Có thể import bản tĩnh ứng viên nhưng không khẳng định viewer không có animation, không bịa reference hay cam kết khớp Static Pose.",
+      "assertions": [
+        "Phân biệt không đọc được danh sách với không có clip.",
+        "Báo đã tải/import nhưng chưa xác minh pose, không thử vượt quyền truy cập."
+      ],
+      "files": []
+    },
+    {
+      "id": 15,
+      "prompt": "Bản tĩnh nhân vật đã đối chiếu đúng với viewer, nhưng khi bật Take001 thì giáp bị tách. Báo kết quả và giữ giúp tôi cả hai bản.",
+      "expected_output": "Báo riêng bản tĩnh đã đối chiếu ở góc nào và animation Take001 còn lỗi; giữ hai file/thư mục riêng. Điều tra animation độc lập, không ghi đè hay tuyên bố sửa xong chỉ vì bản tĩnh đúng.",
+      "assertions": [
+        "Trạng thái xác minh bản tĩnh và trạng thái lỗi animation được báo riêng.",
+        "Giữ nguyên hai bản, không âm thầm thay bản động bằng bản tĩnh."
+      ],
+      "files": []
+    },
+    {
+      "id": 16,
+      "prompt": "Skill 3d-model-download lấy được từ bao nhiêu nguồn? static.poly.pizza và các domain Rodin có tính riêng không?",
+      "expected_output": "Nêu 5 nhóm nguồn: Meshy, Hyper3D Rodin, Poly Pizza, Sketchfab và URL file trực tiếp; tức 4 nền tảng + 1 cách tải. Không tính CDN Poly Pizza hay domain Rodin thành nền tảng riêng.",
+      "assertions": [
+        "Đếm đúng 4 nền tảng cộng URL file trực tiếp, không đếm trùng domain/CDN."
+      ],
+      "files": []
+    }
+  ]
+}
