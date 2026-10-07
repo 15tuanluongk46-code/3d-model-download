@@ -83,3 +83,45 @@ Rodin DRC → OBJ chỉ có geometry. Meshy có thể dùng WebP/mesh quantizati
 khả năng import phụ thuộc ứng dụng đích. Các kiểm tra GLB không thay thế
 Khronos validator hoặc kiểm tra ngoại hình. Bằng chứng live lịch sử nằm trong
 `references/` của từng skill; không coi đó là bảo đảm mọi link hoạt động.
+Không có package Python bên ngoài cần cài cho downloader chính. Native Windows
+chưa được xác minh: helper Sketchfab dùng module Unix `resource`.
+
+## Kiểm tra offline từ checkout
+
+```bash
+python3 scripts/download.py --help
+python3 scripts/download.py --sources
+python3 -B -m unittest discover -s tests -v
+npm --prefix scripts/sketchfab/vendor/sketchfab_downloader_extension test
+```
+
+Node suite dùng `node --test`, không cần `npm install`. Giữ vendor và giấy phép trong `THIRD_PARTY_NOTICES.md`.
+
+## Phụ thuộc theo nguồn
+
+| Nguồn | Điều kiện |
+|---|---|
+| URL file trực tiếp / Poly Pizza | Internet và URL hỗ trợ; không cần CDP hoặc phiên Google |
+| Sketchfab public | Chrome/Chromium trên PATH với tên `google-chrome`, `google-chrome-stable`, `chromium` hoặc `chromium-browser`; dùng profile headless tạm |
+| Meshy / Rodin | `uv`, helper riêng `~/.agents/skills/meshy-rodin-download/scripts/download.py`, Chrome CDP đã đăng nhập theo tài khoản user chọn |
+
+Helper Meshy/Rodin đã được đóng gói, nhưng vẫn cần cài vào thư mục ngang hàng
+theo phần đầu. `MESHY_SKILL_MISSING` nghĩa là chưa cài đúng đường dẫn;
+`UV_REQUIRED` nghĩa là thiếu `uv`.
+
+## Tải khi có URL và quyền phù hợp
+
+```bash
+python3 scripts/download.py 'https://example.org/model.glb' --output ./downloads
+```
+
+URL trên chỉ minh họa cú pháp; thay bằng URL model thực tế do user cung cấp. Mặc định output là `~/Downloads/3d-assets`. Xem `--help` cho timeout, texture-size, bỏ texture/animation. Output runtime và metadata có đường dẫn tuyệt đối; không commit tài sản tải về chỉ để chứng minh setup.
+
+## Xác minh và lỗi
+
+- JSON kết quả chứa file, hash, cảnh báo/partial; báo đúng trạng thái partial.
+- GLB parse hợp lệ không chứng minh texture, skeleton hoặc pose nhìn đúng. Mở viewer/Blender khi nhiệm vụ yêu cầu kiểm tra hình ảnh.
+- Thiếu Chrome chỉ chặn Sketchfab; thiếu helper chỉ chặn Meshy/Rodin. Test offline không chứng minh truy cập dịch vụ live.
+- Không đóng Chrome cá nhân hoặc xóa profile để sửa lỗi CDP; xác minh endpoint/profile trước thao tác.
+
+Đọc [SKILL.md](SKILL.md) và `references/` cho từng nguồn; nguồn public vẫn có giấy phép riêng.

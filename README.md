@@ -1,5 +1,8 @@
 # 3D Model Download
 
+Máy mới: [SETUP.md](SETUP.md). Hướng dẫn AI: [AGENTS.md](AGENTS.md).
+Kiểm tra bàn giao: [VERIFICATION.md](VERIFICATION.md).
+
 Skill cho AI agent tải model 3D từ **5 nhóm nguồn**: Meshy, Hyper3D Rodin,
 Poly Pizza, Sketchfab và URL file trực tiếp. Hướng dẫn vận hành đầy đủ ở
 [SKILL.md](SKILL.md).
