@@ -17,10 +17,13 @@ Related files include `headless.js`, `lib/export-contract.js`, `lib/pipeline.js`
 the extension's original ZIP export path for extension users. Upstream notices
 and license text are preserved; this notice does not relicense upstream code.
 
-## External Meshy/Rodin helper
+## Bundled Meshy/Rodin helper
 
-`meshy-rodin-download` is a separately installed dependency, not vendored here.
-Its own `THIRD_PARTY_NOTICES.md` covers its upstream components.
+`meshy-rodin-download` is included in `bundled-skills/meshy-rodin-download/`
+and installed as a sibling skill following SETUP.md. Its
+[THIRD_PARTY_NOTICES.md](bundled-skills/meshy-rodin-download/THIRD_PARTY_NOTICES.md)
+preserves the MIT notice for the conversion adapter. Meshy's viewer loader
+JS/WASM are fetched at runtime and are not bundled here.
 
 ## Downloaded assets
 

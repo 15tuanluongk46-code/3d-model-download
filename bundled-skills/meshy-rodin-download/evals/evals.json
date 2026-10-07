@@ -1,0 +1,9 @@
+{
+  "skill_name": "meshy-rodin-download",
+  "evals": [
+    {"id": 1, "prompt": "Tải model Meshy này về: https://www.meshy.ai/3d-models/celestial-reverie-01a0c245-8a0c-7620-be5a-14e6dad5719d", "expected_output": "GLB hợp lệ nếu phiên tài khoản sở hữu được API cấp asset; metadata không có token; báo 0 images nếu geometry-only.", "files": []},
+    {"id": 2, "prompt": "Lấy mẫu Rodin này: https://hyper3d.ai/workspace/rodin/b8893ec3-93b8-4f6c-9c3b-810337d2587a", "expected_output": "OBJ checked geometry từ owned history nếu official export không có; nêu geometry-only; không tạo task mới.", "files": []},
+    {"id": 3, "prompt": "Tải giúp https://www.meshy.ai/workspace?sidebar=assets", "expected_output": "Hỏi link chi tiết có task ID; không chọn mẫu ngẫu nhiên.", "files": []},
+    {"id": 4, "prompt": "Tải https://hyper3d.ai/workspace/rodin/e89eaefb-cc42-4928-be44-47e544dd283f", "expected_output": "Báo PERMISSION_DENIED nếu tài khoản không có quyền; không thử tải bằng ID khác.", "files": []}
+  ]
+}

@@ -1,0 +1,85 @@
+# Cài đặt trên máy khác
+
+Repo chứa hai skill: thư mục gốc là `3d-model-download`, thư mục
+`bundled-skills/meshy-rodin-download` là helper Meshy/Rodin. Không cần repo thứ hai.
+
+## Phần mềm cần có
+
+- Linux, Python >= 3.11, Git, `uv`, Node.js (khuyến nghị bản LTS còn hỗ trợ).
+- Chrome/Chromium: Sketchfab tự mở headless profile tạm; Meshy/Rodin kết nối
+  phiên Chrome CDP của người dùng, mặc định `http://127.0.0.1:9222`.
+- `uv run` tự tạo môi trường Python theo script: `playwright>=1.48,<2`,
+  `DracoPy==2.1.0`, `numpy>=1.26,<3`. Cần mạng cho lần tải dependency đầu tiên.
+- Không cần Blender để tải. Blender chỉ cần khi muốn import/xem file.
+- Tài khoản GitHub có quyền đọc repo private. Đăng nhập Meshy/Rodin trên máy mới
+  khi mẫu cần quyền truy cập; phiên trình duyệt không đi kèm repo.
+
+Nếu dùng Chrome mới cho CDP, sử dụng profile riêng và chỉ bind loopback:
+
+```bash
+google-chrome --remote-debugging-address=127.0.0.1 --remote-debugging-port=9222 \
+  --user-data-dir="$HOME/.local/share/3d-model-download/chrome"
+```
+
+Nếu đã có phiên CDP được chọn thì dùng phiên đó; truyền `--cdp` khi endpoint khác.
+Các hướng dẫn agent có tham chiếu `chrome-ops` để điều khiển trình duyệt trên máy
+gốc; skill đó không được đóng gói ở đây. CLI chạy trực tiếp khi đã có CDP,
+không cần `chrome-ops` hay MCP riêng.
+
+## Clone và cài cả hai skill
+
+Clone ngoài thư mục mà agent tự quét skill để tránh nạp helper hai lần:
+
+```bash
+git clone https://github.com/15tuanluongk46-code/3d-model-download.git \
+  ~/3d-model-download-repo
+```
+
+Chạy đoạn dưới. Nếu một trong hai skill đích đã tồn tại, đoạn cài đặt dừng trước
+khi ghi file; hãy kiểm tra/backup bản đang có trước khi cập nhật.
+
+```bash
+python3 - <<'PY'
+from pathlib import Path
+import shutil
+
+repo = Path.home() / '3d-model-download-repo'
+target = Path.home() / '.agents/skills'
+destinations = [target / '3d-model-download', target / 'meshy-rodin-download']
+for dest in destinations:
+    if dest.exists() or dest.is_symlink():
+        raise SystemExit(f'Dừng: đã tồn tại {dest}')
+ignore = shutil.ignore_patterns('.git', '__pycache__', '*.pyc', '.ruff_cache',
+                               '.pytest_cache', '.venv', 'node_modules')
+target.mkdir(parents=True, exist_ok=True)
+shutil.copytree(repo, destinations[0], ignore=shutil.ignore_patterns(
+    '.git', 'bundled-skills', '__pycache__', '*.pyc', '.ruff_cache',
+    '.pytest_cache', '.venv', 'node_modules'))
+shutil.copytree(repo / 'bundled-skills/meshy-rodin-download', destinations[1],
+                ignore=ignore)
+print('Đã cài cả hai skill:', *destinations, sep='\n')
+PY
+```
+
+Khởi động lại OpenCode để nạp skill. Giữ checkout để cập nhật/kiểm tra;
+`git pull` trong checkout không tự ghi đè hai bản skill đã cài.
+
+## Kiểm tra
+
+Tại checkout repo, chạy các lệnh trong README. Kiểm tra bản cài trực tiếp:
+
+```bash
+python3 -B ~/.agents/skills/3d-model-download/scripts/download.py --sources
+uv run ~/.agents/skills/meshy-rodin-download/scripts/download.py --help
+```
+
+Meshy loader tải từ website chính thức khi cần và lưu tại
+`~/.cache/meshy-rodin-download/`; cache không có trong GitHub. Không đưa token,
+cookie, signed URL, profile Chrome, cache hoặc model đã tải vào commit.
+
+## Giới hạn
+
+Rodin DRC → OBJ chỉ có geometry. Meshy có thể dùng WebP/mesh quantization;
+khả năng import phụ thuộc ứng dụng đích. Các kiểm tra GLB không thay thế
+Khronos validator hoặc kiểm tra ngoại hình. Bằng chứng live lịch sử nằm trong
+`references/` của từng skill; không coi đó là bảo đảm mọi link hoạt động.

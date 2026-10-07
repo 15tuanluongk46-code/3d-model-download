@@ -8,24 +8,26 @@ Poly Pizza, Sketchfab và URL file trực tiếp. Hướng dẫn vận hành đ�
 
 - Python 3.11 trở lên.
 - Chrome/Chromium cho extractor Sketchfab.
-- Node.js có hỗ trợ `node --test` để chạy bộ kiểm thử JavaScript.
-- `uv` và skill **`meshy-rodin-download`** cho Meshy/Rodin. Helper này là
-  dependency riêng, **không nằm trong repo này**; router tìm tại
+- Node.js có hỗ trợ `node --test` để chạy bộ kiểm thử JavaScript và chuyển Meshy.
+- `uv` và skill **`meshy-rodin-download`** cho Meshy/Rodin. Helper đã được đóng gói tại
+  [`bundled-skills/meshy-rodin-download`](bundled-skills/meshy-rodin-download);
+  cài theo [SETUP.md](SETUP.md) để router tìm được tại
   `~/.agents/skills/meshy-rodin-download/scripts/download.py`.
 - Meshy/Rodin sử dụng phiên Chrome CDP được chọn; endpoint mặc định là
   `http://127.0.0.1:9222`. Sketchfab dùng Chrome headless với profile tạm riêng.
 
 ## Cài đặt
 
-Clone repo vào một thư mục mới, không ghi đè skill đã có:
+Clone repo vào một thư mục checkout mới ngoài thư mục skill:
 
 ```bash
 git clone https://github.com/15tuanluongk46-code/3d-model-download.git \
-  ~/.agents/skills/3d-model-download
+  ~/3d-model-download-repo
 ```
 
-Repo private yêu cầu tài khoản có quyền truy cập. Khởi động lại OpenCode sau khi
-cài để nạp hướng dẫn skill.
+Sau đó làm theo [SETUP.md](SETUP.md) để cài **cả hai skill** vào các thư mục ngang
+hàng. Repo private yêu cầu tài khoản có quyền truy cập. Khởi động lại OpenCode
+sau khi cài để nạp hướng dẫn skill.
 
 ## Sử dụng
 
@@ -53,6 +55,8 @@ Chạy từ thư mục repo:
 ```bash
 python3 -B -m unittest discover -s tests -v
 npm --prefix scripts/sketchfab/vendor/sketchfab_downloader_extension test
+python3 -B -m unittest discover -s bundled-skills/meshy-rodin-download/tests -v
+node --check bundled-skills/meshy-rodin-download/scripts/decrypt.mjs
 ```
 
 - [Nguồn và giới hạn](references/sources.md)
