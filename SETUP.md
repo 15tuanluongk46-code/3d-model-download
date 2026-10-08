@@ -10,6 +10,8 @@ Repo chứa hai skill: thư mục gốc là `3d-model-download`, thư mục
   phiên Chrome CDP của người dùng, mặc định `http://127.0.0.1:9222`.
 - `uv run` tự tạo môi trường Python theo script: `playwright>=1.48,<2`,
   `DracoPy==2.1.0`, `numpy>=1.26,<3`. Cần mạng cho lần tải dependency đầu tiên.
+  File `bundled-skills/meshy-rodin-download/scripts/download.py.lock` khóa bản resolved;
+  giữ cạnh `download.py` khi copy helper. Dùng `uv run --locked` để từ chối lock lệch metadata.
 - Không cần Blender để tải. Blender chỉ cần khi muốn import/xem file.
 - Tài khoản GitHub có quyền đọc repo private. Đăng nhập Meshy/Rodin trên máy mới
   khi mẫu cần quyền truy cập; phiên trình duyệt không đi kèm repo.
@@ -70,12 +72,15 @@ Tại checkout repo, chạy các lệnh trong README. Kiểm tra bản cài tr�
 
 ```bash
 python3 -B ~/.agents/skills/3d-model-download/scripts/download.py --sources
-uv run ~/.agents/skills/meshy-rodin-download/scripts/download.py --help
+uv run --locked ~/.agents/skills/meshy-rodin-download/scripts/download.py --help
 ```
 
 Meshy loader tải từ website chính thức khi cần và lưu tại
 `~/.cache/meshy-rodin-download/`; cache không có trong GitHub. Không đưa token,
 cookie, signed URL, profile Chrome, cache hoặc model đã tải vào commit.
+Lock Python không khóa JS/WASM viewer từ Meshy hoặc Chrome hệ thống. Kiểm tra từ checkout:
+`uv lock --check --script bundled-skills/meshy-rodin-download/scripts/download.py`.
+Chỉ nâng dependency chủ động bằng `uv lock --upgrade --script bundled-skills/meshy-rodin-download/scripts/download.py` rồi review diff/test lại.
 
 ## Giới hạn
 
